@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Response;
+
 
 use App\Models\Node;
 
@@ -13,7 +16,18 @@ class NodeController extends Controller
     public function store(Request $request)
     {
 
-        // Do validation 
+        
+        $rules = [
+            'name' => 'required|max:200',
+            'type' => 'required|in:developer,manager',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+           
+       if ($validator->fails()) {
+            return response()->json($validator->messages(), Response::HTTP_BAD_REQUEST);
+
+        }
 
         $input = $request->all();
 
@@ -22,9 +36,8 @@ class NodeController extends Controller
             "name" => $input["name"],
             "parent_id" => $input["parent_id"],
             "type" => $input["type"],
-            "department_name" => isset($input["department_name"])?$input["department_name"]:null ,
-            "programming_language" => isset($input["programming_language"])?$input["programming_language"]:null ,
-
+            "department_name" => isset($input["department_name"]) ? $input["department_name"] : null,
+            "programming_language" => isset($input["programming_language"]) ? $input["programming_language"] : null,
         ]);
         
     }
